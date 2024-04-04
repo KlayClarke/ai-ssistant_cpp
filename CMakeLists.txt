@@ -9,8 +9,22 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(CURL_LIBRARY "-lcurl")
+find_package(CURL REQUIRED)
+
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+
+set(HEADERS
+    api.h
+    mainwindow.h
+)
+
+set(SOURCES
+    api.cpp
+    mainwindow.cpp
+    main.cpp
+)
 
 set(PROJECT_SOURCES
         main.cpp
@@ -19,10 +33,14 @@ set(PROJECT_SOURCES
         mainwindow.ui
 )
 
+include_directories(${CURL_INCLUDE_DIR})
+
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(ai-ssistant_cpp
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+        api.h
+        api.cpp
 
     )
 # Define target properties for Android with Qt 6 as:
@@ -43,7 +61,7 @@ else()
     endif()
 endif()
 
-target_link_libraries(ai-ssistant_cpp PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(ai-ssistant_cpp PRIVATE Qt${QT_VERSION_MAJOR}::Widgets CURL)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
